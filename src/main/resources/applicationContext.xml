@@ -3,58 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
-    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
-        <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:tcp://localhost:9092/~/activiti"/>
-        <property name="username" value="sa"/>
-        <property name="password" value=""/>
-    </bean>
-
-    <bean id="sessionFactory"
-          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
-                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="transactionManager"
-          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        <property name="dataSource" ref="dataSource" />
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
+    <import resource="classpath:applicationContext-druid.xml" />
+    <import resource="classpath:activiti.cfg.xml" />
+    
     <context:annotation-config />
 
     <!-- Instruct Spring to perform declarative transaction management automatically 
         on annotated classes. -->
     <tx:annotation-driven />
 
-    <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="transactionManager" ref="transactionManager" />
-        <property name="databaseSchemaUpdate" value="true"/>
-    </bean>
-
-    <!-- 流程引擎 -->
-    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
-        <property name="processEngineConfiguration" ref="processEngineConfiguration" />
-    </bean>
-
-    <!-- 流程服务 -->
-    <bean id="repositoryService" factory-bean="processEngine"
-          factory-method="getRepositoryService" />
-    <bean id="runtimeService" factory-bean="processEngine"
-          factory-method="getRuntimeService" />
-    <bean id="taskService" factory-bean="processEngine"
-          factory-method="getTaskService" />
-    <bean id="historyService" factory-bean="processEngine"
-          factory-method="getHistoryService" />
-    <bean id="managementService" factory-bean="processEngine"
-          factory-method="getManagementService" />
-    <bean id="identityService2" factory-bean="processEngine"
-          factory-method="getIdentityService" />
 </beans>
